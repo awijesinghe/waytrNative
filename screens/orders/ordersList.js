@@ -7,11 +7,13 @@ import { ActivityIndicator, Card, Title, Paragraph } from "react-native-paper";
 
 export default function OrdersList({ navigation }) {
   const { currentUserId } = useContext(UserContext);
+  const [isLoading, setIsLoading] = useState(true)
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
     Firebase.getPreviousOrders(currentUserId.uid).then(response => {
       setOrders(response);
+      setIsLoading(false)
     });
   }, []);
 
@@ -41,7 +43,7 @@ export default function OrdersList({ navigation }) {
     return dateTime;
   }
 
-  if (orders.length > 0) {
+  if (!isLoading) {
     return (
       <View style={{ flex: 1 }}>
         <Text
@@ -63,7 +65,7 @@ export default function OrdersList({ navigation }) {
             paddingHorizontal: 15
           }}
         >
-          {orders &&
+          {orders.length > 0 ?
             orders.map((order, i) => (
               <Card
                 style={{ marginTop: 5 }}
@@ -87,7 +89,7 @@ export default function OrdersList({ navigation }) {
                   </Paragraph>
                 </Card.Content>
               </Card>
-            ))}
+            )) : <Text style={{ fontFamily: "raleway-light", textAlign: "center" }}>No previous orders made. </Text>}
         </ScrollView>
       </View>
     );

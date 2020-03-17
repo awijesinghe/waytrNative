@@ -37,8 +37,6 @@ export default function App() {
   const [user, initialising] = useAuthState(Firebase.auth);
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
-  console.log(user);
-
   if (fontsLoaded) {
     if (!initialising) {
       return user ? (
@@ -51,10 +49,10 @@ export default function App() {
           </RestaurantListContextProvider>
         </UserContextProvider>
       ) : (
-        <SignUpContextProvider>
-          <AccountStackCred />
-        </SignUpContextProvider>
-      );
+          <SignUpContextProvider>
+            <AccountStackCred />
+          </SignUpContextProvider>
+        );
     } else {
       return <AppLoading />;
     }

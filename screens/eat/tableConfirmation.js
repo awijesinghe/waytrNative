@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { globalStyles } from "../../styles/global";
 
-export default function TableConfirmation({ navigation }) {
-  const restTableMax = navigation.getParam("restTableMax");
-  const restTableMin = navigation.getParam("restTableMin");
-  const restName = navigation.getParam("restName");
-  const restUID = navigation.getParam("restUID");
+export default function TableConfirmation({ navigation, route }) {
+  const restTableMax = route.params.restTableMax;
+  const restTableMin = route.params.restTableMin;
+  const restName = route.params.restName;
+  const restUID = route.params.restUID;
   const [tableNum, setTableNum] = useState();
   const defaultMessage =
     "Please note that once seated, you will be unable to join another table until the order is completed.";

@@ -5,13 +5,13 @@ import Firebase from "../../firebase/firebase";
 import { ActivityIndicator, Divider } from "react-native-paper";
 import { Entypo } from "@expo/vector-icons";
 
-export default function RestMenu({ navigation }) {
+export default function RestMenu({ navigation, route }) {
   const [menu, setMenu] = useState();
   const [isLoading, setIsLoading] = useState(true);
-  let restUID = navigation.getParam("restUID");
-  const restTableMax = navigation.getParam("restTableMax");
-  const restTableMin = navigation.getParam("restTableMin");
-  const restName = navigation.getParam("restName");
+  let restUID = route.params.restUID;
+  const restTableMax = route.params.restTableMax;
+  const restTableMin = route.params.restTableMin;
+  const restName = route.params.restName;
 
   Firebase.getRestaurantMenu(restUID)
     .then(response => {

@@ -5,13 +5,14 @@ import Firebase from "../../firebase/firebase";
 import { ActivityIndicator, Divider } from "react-native-paper";
 import { Entypo } from "@expo/vector-icons";
 
-export default function OrderMenu({ navigation }) {
+export default function OrderMenu({ navigation, route }) {
   const [menu, setMenu] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [tempOrders, setTempOrders] = useState([]);
-  let restUID = navigation.getParam("restUID");
-  const socket = navigation.getParam("socket");
-  const orders = navigation.getParam("orders");
+  let restUID = route.params.restUID;
+  const socket = route.params.socket;
+  const orders = route.params.orders;
+  const restName = route.params.restName;
 
   Firebase.getRestaurantMenu(restUID)
     .then(response => {
@@ -82,7 +83,6 @@ export default function OrderMenu({ navigation }) {
               style={{
                 flex: 1,
                 flexDirection: "row",
-                justifyContent: "space-between",
                 marginBottom: 50,
                 marginTop: 30
               }}
@@ -91,7 +91,7 @@ export default function OrderMenu({ navigation }) {
                 <Entypo
                   name="chevron-left"
                   size={32}
-                  style={{ marginLeft: 20 }}
+                  style={{ marginLeft: 20, marginTop: 5 }}
                 />
               </TouchableOpacity>
               <Text
@@ -99,26 +99,23 @@ export default function OrderMenu({ navigation }) {
                   fontFamily: "raleway-bold",
                   fontSize: 40,
                   color: "#333",
-                  height: 50
+                  height: 50,
+                  marginLeft: 30
                 }}
               >
-                {navigation.getParam("restName")}
+                {restName}
               </Text>
-              <TouchableOpacity style={{ height: 50 }}>
-                <Entypo
-                  name="chevron-right"
-                  size={32}
-                  style={{ marginRight: 20 }}
-                />
-              </TouchableOpacity>
             </View>
           </View>
           <Divider />
           <ScrollView>
             {menu.items.map((item, i) => (
-              <View
+              <TouchableOpacity
                 key={i}
                 style={{ marginHorizontal: 25, marginVertical: 12 }}
+                onPress={() => {
+                  navigation.navigate("OrderItem", item);
+                }}
               >
                 <View
                   style={{
@@ -185,20 +182,9 @@ export default function OrderMenu({ navigation }) {
                     </View>
                   </View>
                 </View>
-              </View>
+              </TouchableOpacity>
             ))}
           </ScrollView>
-          <TouchableOpacity
-            onPress={sendOrder}
-            style={{
-              ...globalStyles.logInButton,
-              marginHorizontal: 30,
-              marginBottom: 10,
-              marginTop: 10
-            }}
-          >
-            <Text style={globalStyles.buttonText}>Add items to order</Text>
-          </TouchableOpacity>
         </View>
       );
     } else

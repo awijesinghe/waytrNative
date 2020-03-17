@@ -10,10 +10,10 @@ import { UserContext } from "../../contexts/UserContext";
 
 let socket;
 
-export default function Seated({ navigation }) {
-  const tableNum = navigation.getParam("tableNum");
-  const restName = navigation.getParam("restName");
-  const restUID = navigation.getParam("restUID");
+export default function Seated({ navigation, route }) {
+  const tableNum = route.params.tableNum;
+  const restName = route.params.restName;
+  const restUID = route.params.restUID;
   const [isLoading, setisLoading] = useState(true);
   const [orders, setOrders] = useState([]);
   const [dbOrders, setDbOrders] = useState([]);
@@ -78,7 +78,7 @@ export default function Seated({ navigation }) {
 
   function sendOrder() {
     if (orders.length > 0) {
-      if (!dbOrders) {
+      if (dbOrders.length === 0) {
         Firebase.sendOrder({
           orders,
           restaurantId: restUID,
@@ -186,7 +186,7 @@ export default function Seated({ navigation }) {
           }}
         >
           <Text style={globalStyles.buttonText}>
-            {orderToggle ? "Complete" : "Send"} Order
+            {orderToggle ? "Bill" : "Send Order"}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
