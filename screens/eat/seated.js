@@ -7,6 +7,7 @@ import DBOrders from "./orderComponents/dbOrders";
 import io from "socket.io-client";
 import Firebase from "../../firebase/firebase";
 import { UserContext } from "../../contexts/UserContext";
+import { PendingOrdersContext } from "../../contexts/PendingOrdersContext";
 
 let socket;
 
@@ -20,11 +21,13 @@ export default function Seated({ navigation, route }) {
   const [orderDocId, setOrderDocId] = useState("");
   const [orderToggle, setOrderToggle] = useState(false);
   const { currentUserId } = useContext(UserContext);
+  const { setPendingOrders, setSocket } = useContext(PendingOrdersContext);
   const currentDateTime = Math.round(new Date().getTime() / 1000);
   const ENDPOINT = "http://192.168.1.31:4000";
 
   useEffect(() => {
     socket = io(ENDPOINT);
+    setSocket(socket);
     socket.emit(
       "join",
       {
@@ -69,7 +72,6 @@ export default function Seated({ navigation, route }) {
         });
         setisLoading(false);
       });
-    console.log("updated");
   }, []);
 
   function toggleOrderView() {
@@ -88,7 +90,7 @@ export default function Seated({ navigation, route }) {
           orderDateTime: new Date(),
           orderCompleted: false
         }).then(() => {
-          setOrders([]);
+          setPendingOrders([]);
         });
       } else {
         orders.map(item => {
@@ -111,7 +113,7 @@ export default function Seated({ navigation, route }) {
           .collection("orders")
           .doc(orderDocId)
           .update({ orders: updatedOrders });
-        setOrders([]);
+        setPendingOrders([]);
       }
 
       socket.emit("sendOrder", null, () => {});
@@ -147,7 +149,7 @@ export default function Seated({ navigation, route }) {
           isLoading={isLoading}
         />
       ) : (
-        <PendingOrders toggleOrderView={toggleOrderView} orders={orders} />
+        <PendingOrders toggleOrderView={toggleOrderView} />
       )}
       <View
         style={{
@@ -164,9 +166,7 @@ export default function Seated({ navigation, route }) {
           onPress={() => {
             navigation.navigate("OrderMenu", {
               restName,
-              restUID,
-              socket,
-              orders
+              restUID
             });
           }}
           style={{

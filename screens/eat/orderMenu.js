@@ -8,17 +8,13 @@ import { Entypo } from "@expo/vector-icons";
 export default function OrderMenu({ navigation, route }) {
   const [menu, setMenu] = useState();
   const [isLoading, setIsLoading] = useState(true);
-  const [tempOrders, setTempOrders] = useState([]);
   let restUID = route.params.restUID;
-  const socket = route.params.socket;
-  const orders = route.params.orders;
   const restName = route.params.restName;
 
   Firebase.getRestaurantMenu(restUID)
     .then(response => {
       if (isLoading !== response.loading) {
         setIsLoading(response.loading);
-        setTempOrders(orders);
       }
       if (!response.loading && !menu) {
         setMenu(response.menu);
@@ -30,50 +26,6 @@ export default function OrderMenu({ navigation, route }) {
     navigation.goBack();
   };
 
-  function sendOrder() {
-    socket.emit("sendTempOrder", tempOrders, () => {});
-    navigation.goBack();
-  }
-
-  function changeQuantity(menu, i, action) {
-    const order = tempOrders.find(item => item.item === menu.items[i]);
-    let orderQuantity;
-    if (order) {
-      orderQuantity = +order.quantity;
-    } else {
-      orderQuantity = 0;
-    }
-
-    let newOrder = tempOrders.filter(item => {
-      return item.item !== menu.items[i];
-    });
-    if (action === "add") {
-      setTempOrders([
-        ...newOrder,
-        {
-          item: menu.items[i],
-          quantity: orderQuantity + 1,
-          price: menu.prices[i],
-          status: 0
-        }
-      ]);
-    } else if (action === "subtract") {
-      if (orderQuantity > 1) {
-        setTempOrders([
-          ...newOrder,
-          {
-            item: menu.items[i],
-            quantity: orderQuantity - 1,
-            price: menu.prices[i],
-            status: 0
-          }
-        ]);
-      } else {
-        setTempOrders(newOrder);
-      }
-    }
-  }
-
   if (!isLoading && menu) {
     if (Object.keys(menu).length > 0) {
       return (
@@ -84,7 +36,8 @@ export default function OrderMenu({ navigation, route }) {
                 flex: 1,
                 flexDirection: "row",
                 marginBottom: 50,
-                marginTop: 30
+                marginTop: 30,
+                width: 500
               }}
             >
               <TouchableOpacity onPress={goBack} style={{ height: 50 }}>
@@ -112,74 +65,32 @@ export default function OrderMenu({ navigation, route }) {
             {menu.items.map((item, i) => (
               <TouchableOpacity
                 key={i}
-                style={{ marginHorizontal: 25, marginVertical: 12 }}
+                style={{ marginVertical: 12 }}
                 onPress={() => {
-                  navigation.navigate("OrderItem", item);
+                  navigation.navigate("OrderItem", {
+                    item: menu.items[i],
+                    description: menu.descriptions[i],
+                    price: menu.prices[i],
+                    allergens: menu.allergens[i]
+                  });
                 }}
               >
                 <View
                   style={{
                     flex: 1,
                     flexDirection: "row",
-                    justifyContent: "space-evenly"
+                    justifyContent: "space-between",
+                    marginLeft: 15
                   }}
                 >
-                  <View
-                    style={{
-                      flex: 10
-                    }}
-                  >
+                  <View style={{ flex: 10 }}>
                     <Text style={{ fontWeight: "bold" }}>{menu.items[i]}</Text>
-                    <Text
-                      style={{ fontFamily: "raleway-italic", marginRight: 35 }}
-                    >
+                    <Text style={{ fontFamily: "raleway-italic" }}>
                       {menu.descriptions[i]}
                     </Text>
-                    <Text>${menu.prices[i]}</Text>
                   </View>
-
-                  <View
-                    style={{
-                      flex: 3,
-                      marginTop: 5
-                    }}
-                  >
-                    <View style={{ flex: 1, flexDirection: "row" }}>
-                      <TouchableOpacity
-                        onPress={() => {
-                          changeQuantity(menu, i, "subtract");
-                        }}
-                      >
-                        <Entypo
-                          name="minus"
-                          size={24}
-                          style={{ height: 50, marginRight: 15 }}
-                        />
-                      </TouchableOpacity>
-                      <Text
-                        style={{
-                          fontSize: 18,
-                          fontFamily: "raleway-regular",
-                          minWidth: 20
-                        }}
-                      >
-                        {tempOrders.find(item => item.item === menu.items[i])
-                          ? tempOrders.find(item => item.item === menu.items[i])
-                              .quantity
-                          : 0}
-                      </Text>
-                      <TouchableOpacity
-                        onPress={() => {
-                          changeQuantity(menu, i, "add");
-                        }}
-                      >
-                        <Entypo
-                          name="plus"
-                          size={24}
-                          style={{ height: 50, marginLeft: 10 }}
-                        />
-                      </TouchableOpacity>
-                    </View>
+                  <View style={{ flex: 2 }}>
+                    <Text>${menu.prices[i]}</Text>
                   </View>
                 </View>
               </TouchableOpacity>

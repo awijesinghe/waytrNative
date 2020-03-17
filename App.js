@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { StatusBar } from "react-native";
 import * as Font from "expo-font";
 import { AppLoading } from "expo";
 import TabNavigation from "./routes/tabNavigation";
@@ -11,6 +10,7 @@ import { Provider as PaperProvider } from "react-native-paper";
 import AccountStackCred from "./routes/accountCredStack";
 import SignUpContextProvider from "./contexts/SignUpContext";
 import RestaurantListContextProvider from "./contexts/RestaurantListContext";
+import PendingOrdersContextProvider from "./contexts/PendingOrdersContext";
 import { YellowBox } from "react-native";
 import _ from "lodash";
 
@@ -43,16 +43,17 @@ export default function App() {
         <UserContextProvider>
           <RestaurantListContextProvider>
             <PaperProvider>
-              <StatusBar />
-              <TabNavigation user={user} styles={globalStyles.tabNav} />
+              <PendingOrdersContextProvider>
+                <TabNavigation user={user} styles={globalStyles.tabNav} />
+              </PendingOrdersContextProvider>
             </PaperProvider>
           </RestaurantListContextProvider>
         </UserContextProvider>
       ) : (
-          <SignUpContextProvider>
-            <AccountStackCred />
-          </SignUpContextProvider>
-        );
+        <SignUpContextProvider>
+          <AccountStackCred />
+        </SignUpContextProvider>
+      );
     } else {
       return <AppLoading />;
     }

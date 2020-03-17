@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, ScrollView, Text, TouchableOpacity } from "react-native";
 import { DataTable } from "react-native-paper";
 import { globalStyles } from "../../../styles/global";
 import { Entypo } from "@expo/vector-icons";
+import { PendingOrdersContext } from "../../../contexts/PendingOrdersContext";
 
-export default function PendingOrders({ toggleOrderView, orders }) {
+export default function PendingOrders({ toggleOrderView }) {
+  const { pendingOrders } = useContext(PendingOrdersContext);
   return (
     <View>
       <View
@@ -35,8 +37,8 @@ export default function PendingOrders({ toggleOrderView, orders }) {
           </DataTable.Title>
         </DataTable.Header>
         <ScrollView>
-          {orders.length > 0 &&
-            orders.map((order, i) => (
+          {pendingOrders.length > 0 &&
+            pendingOrders.map((order, i) => (
               <DataTable.Row key={i}>
                 <DataTable.Cell style={{ flex: 3 }}>
                   {order.item}
