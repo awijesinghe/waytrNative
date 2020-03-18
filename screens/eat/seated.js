@@ -21,7 +21,9 @@ export default function Seated({ navigation, route }) {
   const [orderDocId, setOrderDocId] = useState("");
   const [orderToggle, setOrderToggle] = useState(false);
   const { currentUserId } = useContext(UserContext);
-  const { setPendingOrders, setSocket } = useContext(PendingOrdersContext);
+  const { setPendingOrders, setSocket, setTotal } = useContext(
+    PendingOrdersContext
+  );
   const currentDateTime = Math.round(new Date().getTime() / 1000);
   const ENDPOINT = "http://192.168.1.31:4000";
 
@@ -91,6 +93,7 @@ export default function Seated({ navigation, route }) {
           orderCompleted: false
         }).then(() => {
           setPendingOrders([]);
+          setTotal(0);
         });
       } else {
         orders.map(item => {

@@ -30,7 +30,6 @@ export default function OrderItem({ navigation, route }) {
     let index;
     let inOrder = false;
 
-    console.log("NEW ORDER", TPOrders);
     if (quantity > 0) {
       TPOrders.map((order, i) => {
         if (order.item === item) {

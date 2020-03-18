@@ -1,58 +1,64 @@
 import React, { useContext } from "react";
-import { View, ScrollView, Text, TouchableOpacity } from "react-native";
+import { View, ScrollView, Text } from "react-native";
+import { TouchableOpacity, StyleSheet } from "react-native";
 import { DataTable } from "react-native-paper";
-import { globalStyles } from "../../../styles/global";
 import { Entypo } from "@expo/vector-icons";
 import { PendingOrdersContext } from "../../../contexts/PendingOrdersContext";
+import DropDown from "../components/pendingDropDown";
 
 export default function PendingOrders({ toggleOrderView }) {
-  const { pendingOrders } = useContext(PendingOrdersContext);
+  const { pendingOrders, total, setTotal } = useContext(PendingOrdersContext);
+  let pendingTotal = 0;
+
   return (
     <View>
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "row",
-          justifyContent: "space-between",
-          position: "absolute",
-          left: 15,
-          right: 15
-        }}
-      >
-        <Text style={{ fontSize: 20, fontWeight: "bold", height: 50 }}>
-          Pending Orders
-        </Text>
+      <View style={styles.viewContainer}>
+        <Text style={styles.heading2}>Pending Orders</Text>
         <TouchableOpacity onPress={toggleOrderView}>
           <Entypo name="chevron-right" size={28} style={{ marginLeft: 20 }} />
         </TouchableOpacity>
       </View>
       <DataTable style={{ marginTop: 25 }}>
         <DataTable.Header>
-          <DataTable.Title style={{ flex: 3 }}>Item</DataTable.Title>
-          <DataTable.Title style={{ flex: 1 }} numeric>
+          <DataTable.Title style={{ flex: 1 }} numeric></DataTable.Title>
+          <DataTable.Title style={{ flex: 8 }}>Item</DataTable.Title>
+          <DataTable.Title style={{ flex: 2 }} numeric>
             Quantity
           </DataTable.Title>
-          <DataTable.Title style={{ flex: 2 }} numeric>
-            Unit Price ($)
+          <DataTable.Title style={{ flex: 3 }} numeric>
+            Price ($)
           </DataTable.Title>
         </DataTable.Header>
         <ScrollView>
           {pendingOrders.length > 0 &&
-            pendingOrders.map((order, i) => (
-              <DataTable.Row key={i}>
-                <DataTable.Cell style={{ flex: 3 }}>
-                  {order.item}
-                </DataTable.Cell>
-                <DataTable.Cell style={{ flex: 1 }} numeric>
-                  {order.quantity}
-                </DataTable.Cell>
-                <DataTable.Cell style={{ flex: 2 }} numeric>
-                  {order.price}
-                </DataTable.Cell>
-              </DataTable.Row>
-            ))}
+            pendingOrders.map((order, i) => {
+              pendingTotal = pendingTotal + order.price * order.quantity;
+              setTotal(pendingTotal);
+              return <DropDown key={i} order={order} i={i} />;
+            })}
+          <DataTable.Row>
+            <DataTable.Cell style={{ justifyContent: "flex-end" }}>
+              Total : ${total}
+            </DataTable.Cell>
+          </DataTable.Row>
         </ScrollView>
       </DataTable>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  viewContainer: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    position: "absolute",
+    left: 15,
+    right: 15
+  },
+  heading2: {
+    fontSize: 20,
+    fontWeight: "bold",
+    height: 50
+  }
+});
