@@ -32,8 +32,7 @@ export default function PendingOrders({ toggleOrderView }) {
         <ScrollView>
           {pendingOrders.length > 0 &&
             pendingOrders.map((order, i) => {
-              pendingTotal = pendingTotal + order.price * order.quantity;
-              setTotal(pendingTotal);
+              setTotal(pendingTotal + order.price * order.quantity);
               return <DropDown key={i} order={order} i={i} />;
             })}
           <DataTable.Row>

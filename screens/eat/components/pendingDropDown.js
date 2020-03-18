@@ -10,7 +10,6 @@ export default function DropDown({ order, i }) {
     PendingOrdersContext
   );
   let TPOrders = pendingOrders;
-  let TPTotal = total;
 
   return (
     <View>
@@ -51,7 +50,7 @@ export default function DropDown({ order, i }) {
                   onPress={() => {
                     TPOrders[i].quantity = TPOrders[i].quantity - 1;
                     setPendingOrders(TPOrders);
-                    setTotal(TPTotal - TPOrders[i].price);
+                    setTotal(total - TPOrders[i].price);
                   }}
                 >
                   <FontAwesome
@@ -74,7 +73,7 @@ export default function DropDown({ order, i }) {
                 onPress={() => {
                   TPOrders[i].quantity = TPOrders[i].quantity + 1;
                   setPendingOrders(TPOrders);
-                  setTotal(TPTotal + TPOrders[i].price);
+                  setTotal(total + TPOrders[i].price);
                 }}
               >
                 <FontAwesome

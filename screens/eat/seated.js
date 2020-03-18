@@ -16,12 +16,11 @@ export default function Seated({ navigation, route }) {
   const restName = route.params.restName;
   const restUID = route.params.restUID;
   const [isLoading, setisLoading] = useState(true);
-  const [orders, setOrders] = useState([]);
   const [dbOrders, setDbOrders] = useState([]);
   const [orderDocId, setOrderDocId] = useState("");
   const [orderToggle, setOrderToggle] = useState(false);
   const { currentUserId } = useContext(UserContext);
-  const { setPendingOrders, setSocket, setTotal } = useContext(
+  const { pendingOrders, setPendingOrders, setSocket, setTotal } = useContext(
     PendingOrdersContext
   );
   const currentDateTime = Math.round(new Date().getTime() / 1000);
@@ -43,7 +42,7 @@ export default function Seated({ navigation, route }) {
     );
 
     socket.on("order", order => {
-      setOrders(order);
+      setPendingOrders(order);
     });
 
     return () => {
@@ -81,22 +80,19 @@ export default function Seated({ navigation, route }) {
   }
 
   function sendOrder() {
-    if (orders.length > 0) {
+    if (pendingOrders.length > 0) {
       if (dbOrders.length === 0) {
         Firebase.sendOrder({
-          orders,
+          orders: pendingOrders,
           restaurantId: restUID,
           restName,
           tableNum,
           uid: currentUserId.uid,
           orderDateTime: new Date(),
           orderCompleted: false
-        }).then(() => {
-          setPendingOrders([]);
-          setTotal(0);
         });
       } else {
-        orders.map(item => {
+        pendingOrders.map(item => {
           dbOrders.map(order => {
             if (order.item === item.item) {
               item.quantity = item.quantity + order.quantity;
@@ -105,7 +101,7 @@ export default function Seated({ navigation, route }) {
           });
           return item;
         });
-        let concat = orders.concat(dbOrders);
+        let concat = pendingOrders.concat(dbOrders);
         let updatedOrders = Array.from(
           new Set(concat.map(order => order.item))
         ).map(i => {
@@ -116,9 +112,10 @@ export default function Seated({ navigation, route }) {
           .collection("orders")
           .doc(orderDocId)
           .update({ orders: updatedOrders });
-        setPendingOrders([]);
       }
 
+      setPendingOrders([]);
+      setTotal(0);
       socket.emit("sendOrder", null, () => {});
     }
   }
