@@ -90,7 +90,7 @@ export default function OrderMenu({ navigation, route }) {
                     </Text>
                   </View>
                   <View style={{ flex: 2 }}>
-                    <Text>${menu.prices[i]}</Text>
+                    <Text>${menu.prices[i].toFixed(2)}</Text>
                   </View>
                 </View>
               </TouchableOpacity>

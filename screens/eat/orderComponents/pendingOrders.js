@@ -37,7 +37,7 @@ export default function PendingOrders({ toggleOrderView }) {
             })}
           <DataTable.Row>
             <DataTable.Cell style={{ justifyContent: "flex-end" }}>
-              Total : ${total}
+              Total : ${total.toFixed(2)}
             </DataTable.Cell>
           </DataTable.Row>
         </ScrollView>

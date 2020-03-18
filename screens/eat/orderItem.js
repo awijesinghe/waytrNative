@@ -26,7 +26,7 @@ export default function OrderItem({ navigation, route }) {
 
   function addToOrder() {
     let TPOrders = pendingOrders;
-    let orderItem = { item, price, quantity, note };
+    let orderItem = { item, price, quantity, note, status: 0 };
     let index;
     let inOrder = false;
 
@@ -57,7 +57,7 @@ export default function OrderItem({ navigation, route }) {
       <Divider style={styles.divider} />
       <ScrollView>
         <Text style={styles.itemInfoText}>{description}</Text>
-        <Text style={styles.price}>${price}</Text>
+        <Text style={styles.price}>${price.toFixed(2)}</Text>
         <Text style={styles.allergen}>
           {allergens !== "None"
             ? `Please be aware, this item contains ${allergens.toLowerCase()}`
